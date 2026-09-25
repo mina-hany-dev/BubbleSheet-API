@@ -4,11 +4,11 @@
 
 **Backend API powering the BubbleSheet educational assessment platform**
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![C#](https://img.shields.io/badge/C%23-ASP.NET_Core-239120?style=for-the-badge&logo=csharp&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![SQL Server](https://img.shields.io/badge/SQL_Server-EF_Core-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/en-us/sql-server)
-[![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
-[![Swagger](https://img.shields.io/badge/Docs-Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://swagger.io/)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge\&logo=dotnet\&logoColor=white)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-ASP.NET_Core-239120?style=for-the-badge\&logo=csharp\&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![SQL Server](https://img.shields.io/badge/SQL_Server-EF_Core-CC2927?style=for-the-badge\&logo=microsoftsqlserver\&logoColor=white)](https://www.microsoft.com/en-us/sql-server)
+[![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=for-the-badge\&logo=jsonwebtokens\&logoColor=white)](https://jwt.io/)
+[![Swagger](https://img.shields.io/badge/Docs-Swagger-85EA2D?style=for-the-badge\&logo=swagger\&logoColor=black)](https://swagger.io/)
 
 *Helping teachers, schools, and educational centers move assessment workflows into the digital era.*
 
@@ -18,42 +18,45 @@
 
 ## 📌 Overview
 
-**BubbleSheet** is an EdTech platform that digitizes traditional assessment workflows. It provides a comprehensive suite of tools for:
+**BubbleSheet** is an EdTech platform designed to digitize traditional assessment workflows and provide a centralized environment for managing educational assessments.
 
-- Creating and managing exams and question banks
-- Automatically evaluating student answers
-- Tracking student performance over time
-- Managing educational content and PDFs
-- Handling payments through a wallet and recharge-code system
+The platform provides tools for:
 
-This repository contains the **backend API** responsible for the core business logic, authentication, data management, assessment workflows, and external service integrations.
+* Creating and managing exams and question banks
+* Automatically evaluating student submissions
+* Tracking student attempts and performance
+* Managing educational lessons and PDF resources
+* Managing student wallets and recharge codes
+* Supporting administrative dashboards and platform operations
+
+This repository contains the **backend API** responsible for the platform's core business logic, authentication, data access, assessment workflows, and external service integrations.
 
 ---
 
 ## ✨ Features
 
-| Category | Features |
-|---|---|
-| 🔐 **Auth** | JWT authentication, role-based authorization, password reset |
-| 👥 **Users** | Student management, admin management |
-| 📝 **Exams** | Exam creation & management, random exam generation |
-| 📚 **Question Banks** | Question bank management, multiple-choice answers |
-| 📊 **Assessment** | Student attempts, automatic scoring, performance tracking |
-| ⭐ **Reviews** | Exam and question-bank reviews |
-| 📖 **Content** | Lesson management, PDF file management |
-| 💳 **Payments** | Wallet system, recharge codes |
-| 📢 **Platform** | Advertisements, academic year management, dashboard & statistics |
-| 📧 **Notifications** | Email delivery via Brevo |
-| ☁️ **Storage** | External file storage via Bunny Storage |
-| 📘 **Docs** | Swagger / OpenAPI documentation |
+| Category              | Features                                                        |
+| --------------------- | --------------------------------------------------------------- |
+| 🔐 **Authentication** | JWT authentication, role-based authorization, password reset    |
+| 👥 **Users**          | Student and admin management                                    |
+| 📝 **Exams**          | Exam creation and management, random exam generation            |
+| 📚 **Question Banks** | Question bank management, questions and multiple-choice answers |
+| 📊 **Assessment**     | Student attempts, automatic scoring, performance tracking       |
+| ⭐ **Reviews**         | Exam and question-bank reviews                                  |
+| 📖 **Content**        | Lesson management, PDF management                               |
+| 💳 **Payments**       | Wallet system, recharge codes, transaction tracking             |
+| 📢 **Platform**       | Advertisements, academic years, dashboard and statistics        |
+| 📧 **Email**          | Transactional email delivery through Brevo                      |
+| ☁️ **Storage**        | External file storage through Bunny Storage                     |
+| 📘 **Documentation**  | Swagger / OpenAPI                                               |
 
 ---
 
 ## 🏗️ Architecture
 
-The project follows a **Clean Architecture** inspired layered approach:
+The project follows a **layered architecture inspired by Clean Architecture principles**, with responsibilities separated across API, application services, infrastructure, and domain layers.
 
-```
+```text
 ┌──────────────────────────────┐
 │          API Layer           │
 │   Controllers / HTTP / Auth  │
@@ -68,55 +71,66 @@ The project follows a **Clean Architecture** inspired layered approach:
                ▼
 ┌──────────────────────────────┐
 │     Infrastructure Layer     │
-│  EF Core / Repos / External  │
+│  EF Core / Repositories /    │
+│      External Services       │
 └──────────────┬───────────────┘
                │
                ▼
 ┌──────────────────────────────┐
 │         Domain Layer         │
-│  Entities / Interfaces /     │
-│  Enums / Domain Contracts    │
+│ Entities / Interfaces /      │
+│ Enums / Domain Contracts     │
 └──────────────────────────────┘
 ```
 
 ### Layers
 
-| Layer | Responsibility |
-|---|---|
-| **API** | HTTP endpoints, controllers, request handling, auth, Swagger |
-| **Services** | Business logic, orchestration between layers |
-| **Infrastructure** | EF Core, SQL Server, repositories, Unit of Work, external services |
-| **Domain** | Core entities, interfaces, enums, domain contracts |
+| Layer              | Responsibility                                                                            |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| **API**            | HTTP endpoints, controllers, request handling, authentication, authorization, and Swagger |
+| **Services**       | Application business logic and orchestration                                              |
+| **Infrastructure** | EF Core, SQL Server, repositories, Unit of Work, migrations, and external services        |
+| **Domain**         | Core entities, interfaces, enums, and domain contracts                                    |
 
 ---
 
 ## 🛠️ Technology Stack
 
 ### Core
-- **C# / .NET 8** — ASP.NET Core Web API
+
+* **C#**
+* **.NET 8**
+* **ASP.NET Core Web API**
 
 ### Data Access
-- **Entity Framework Core** with SQL Server
-- Repository Pattern + Unit of Work Pattern
-- EF Core Migrations
+
+* **Entity Framework Core**
+* **SQL Server**
+* Repository Pattern
+* Unit of Work Pattern
+* EF Core Migrations
 
 ### Security
-- JWT Bearer Authentication
-- BCrypt password hashing
-- Role-based authorization (`Admin`, `Student`)
+
+* JWT Bearer Authentication
+* BCrypt password hashing
+* Role-based authorization
+* `Admin` and `Student` roles
 
 ### External Services
-- **[Bunny Storage](https://bunny.net/)** — file & media storage
-- **[Brevo](https://www.brevo.com/)** — transactional email delivery
 
-### Documentation
-- **Swagger / OpenAPI**
+* **Bunny Storage** — file and media storage
+* **Brevo** — transactional email delivery
+
+### API Documentation
+
+* **Swagger / OpenAPI**
 
 ---
 
 ## 📁 Project Structure
 
-```
+```text
 BubbleSheet/
 │
 ├── BubleSheet/                     # API Layer
@@ -124,18 +138,19 @@ BubbleSheet/
 │   ├── Services/
 │   │   ├── Implementation/         # Service implementations
 │   │   ├── Interfaces/             # Service contracts
-│   │   └── Models/                 # Request/response models
+│   │   └── Models/                 # Service-related models
 │   ├── Program.cs
-│   └── appsettings.json
+│   ├── appsettings.json
+│   └── Properties/
 │
 ├── Domain.bublesheet/              # Domain Layer
 │   ├── Entities/                   # Core domain entities
-│   ├── Enums/
+│   ├── Enums/                      # Domain enums
 │   └── Interfaces/                 # Domain contracts
 │
 ├── bubblesheet.Infrastracture/     # Infrastructure Layer
-│   ├── Data/                       # DbContext
-│   ├── Dtos/                       # Data transfer objects
+│   ├── Data/                       # EF Core DbContext
+│   ├── Dtos/                       # Data Transfer Objects
 │   ├── Migrations/                 # EF Core migrations
 │   └── Repos/                      # Repository implementations
 │
@@ -144,32 +159,50 @@ BubbleSheet/
 
 ---
 
-## 🔐 Authentication Flow
+## 🔐 Authentication & Authorization
 
-```
+The API uses **JWT Bearer Authentication** to secure protected endpoints.
+
+The general authentication flow is:
+
+```text
 Client
   │
-  │  POST /auth/login
+  │ Authentication Request
   ▼
-Authentication Endpoint
+Authentication Service
   │
-  ├── Validate credentials (BCrypt)
-  ├── Generate JWT token
-  │
-  ▼
-Access Token returned to client
+  ├── Validate credentials
+  ├── Verify password
+  ├── Generate JWT
   │
   ▼
-Bearer token used on protected endpoints
+Access Token
+  │
+  ▼
+Authenticated API Requests
+  │
+  └── Role-based authorization
 ```
 
-All protected endpoints require a valid `Authorization: Bearer <token>` header. Access is scoped by user role (`Admin` or `Student`).
+Protected endpoints require a valid Bearer token:
+
+```http
+Authorization: Bearer <access-token>
+```
+
+Authorization is applied according to the authenticated user's role, including:
+
+* `Admin`
+* `Student`
 
 ---
 
 ## ⚙️ Configuration
 
-The application requires the following configuration (do **not** commit real credentials):
+The application requires environment-specific configuration for database access, authentication, storage, and email services.
+
+Example configuration:
 
 ```json
 {
@@ -182,21 +215,21 @@ The application requires the following configuration (do **not** commit real cre
     "Audience": "<audience>"
   },
   "BunnyStorage": {
-    "ZoneName": "",
-    "AccessKey": "",
-    "Region": "",
-    "BaseUrl": "",
-    "UrlTokenAuthenticationKey": ""
+    "ZoneName": "<zone name>",
+    "AccessKey": "<access key>",
+    "Region": "<region>",
+    "BaseUrl": "<base URL>",
+    "UrlTokenAuthenticationKey": "<token key>"
   },
   "BrevoSettings": {
-    "ApiKey": "",
-    "SenderEmail": "",
-    "SenderName": ""
+    "ApiKey": "<API key>",
+    "SenderEmail": "<sender email>",
+    "SenderName": "<sender name>"
   }
 }
 ```
 
-> ⚠️ **Never commit real secrets, API keys, or connection strings to source control.**
+> ⚠️ **Never commit real credentials, API keys, connection strings, or other secrets to source control.**
 
 ---
 
@@ -204,37 +237,60 @@ The application requires the following configuration (do **not** commit real cre
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download)
-- SQL Server instance
-- Configured `appsettings.json` (see Configuration section)
-- External service credentials (Bunny Storage, Brevo)
+* [.NET 8 SDK](https://dotnet.microsoft.com/download)
+* SQL Server
+* Configured application settings
+* Required Bunny Storage credentials
+* Required Brevo credentials
 
-### Run Locally
+### Restore Dependencies
 
 ```bash
-# Restore dependencies
 dotnet restore
+```
 
-# Build the project
+### Build
+
+```bash
 dotnet build
+```
 
-# Apply database migrations
-dotnet ef database update --project bubblesheet.Infrastracture --startup-project BubleSheet
+### Apply Database Migrations
 
-# Run the API
+```bash
+dotnet ef database update \
+  --project bubblesheet.Infrastracture \
+  --startup-project BubleSheet
+```
+
+### Run the API
+
+```bash
 dotnet run --project BubleSheet
 ```
 
-Once running, navigate to the Swagger UI (typically `https://localhost:<port>/swagger`) to explore and test the API.
+Once the application is running, open the configured Swagger endpoint to explore and test the API.
 
-### Database Migrations
+---
+
+## 🗄️ Database Migrations
+
+The project uses **Entity Framework Core Migrations** to manage database schema changes.
+
+### Create a Migration
 
 ```bash
-# Add a new migration
-dotnet ef migrations add <MigrationName> --project bubblesheet.Infrastracture --startup-project BubleSheet
+dotnet ef migrations add <MigrationName> \
+  --project bubblesheet.Infrastracture \
+  --startup-project BubleSheet
+```
 
-# Apply migrations
-dotnet ef database update --project bubblesheet.Infrastracture --startup-project BubleSheet
+### Apply Migrations
+
+```bash
+dotnet ef database update \
+  --project bubblesheet.Infrastracture \
+  --startup-project BubleSheet
 ```
 
 ---
@@ -242,89 +298,103 @@ dotnet ef database update --project bubblesheet.Infrastracture --startup-project
 ## 🧩 Core Modules
 
 <details>
-<summary><strong>Auth & Accounts</strong></summary>
+<summary><strong>Authentication & Accounts</strong></summary>
 
-Handles student and admin authentication, JWT generation, role-based authorization, and password reset flows.
+Handles student and admin authentication, JWT generation, role-based authorization, and password reset workflows.
+
 </details>
 
 <details>
 <summary><strong>Exams</strong></summary>
 
-Full exam lifecycle: creation, question management, configuration, student attempts, automatic evaluation, and score calculation.
+Provides the complete exam workflow, including exam creation, question management, configuration, student attempts, automatic evaluation, and score calculation.
+
 </details>
 
 <details>
 <summary><strong>Question Banks</strong></summary>
 
-Organize and reuse questions independently from individual exams. Supports question management, multiple-choice answers, attempt tracking, and scoring.
+Provides reusable question collections independent from individual exams, including question management, multiple-choice answers, submissions, attempts, and scoring.
+
 </details>
 
 <details>
 <summary><strong>Random Exams</strong></summary>
 
-Dynamically generate exams based on configurable question-selection rules.
+Supports dynamically generated exams based on configured question-selection rules.
+
 </details>
 
 <details>
 <summary><strong>Student Attempts & Scoring</strong></summary>
 
-Records attempts, stores answers, evaluates submissions, calculates scores, and tracks performance history.
+Tracks student attempts, submitted answers, evaluation results, scores, and assessment history.
+
 </details>
 
 <details>
 <summary><strong>Lessons & Educational Content</strong></summary>
 
-Management of educational lessons and associated learning resources.
+Provides management functionality for educational lessons and associated learning resources.
+
 </details>
 
 <details>
 <summary><strong>PDF Management</strong></summary>
 
-Upload, manage, and serve educational PDFs via Bunny Storage integration.
+Handles educational PDF resources and integrates with external storage infrastructure.
+
 </details>
 
 <details>
 <summary><strong>Wallet & Recharge Codes</strong></summary>
 
-A wallet-based system for students to use recharge codes and manage transactions.
+Provides wallet operations, recharge codes, and transaction tracking for student accounts.
+
 </details>
 
 <details>
 <summary><strong>Dashboard & Statistics</strong></summary>
 
-Platform-wide administrative statistics and analytics.
+Provides administrative statistics and platform-level information.
+
 </details>
 
 ---
 
 ## 📐 Engineering Practices
 
-- ✅ Clean / Layered Architecture
-- ✅ Separation of Concerns
-- ✅ Dependency Injection
-- ✅ Repository Pattern + Unit of Work
-- ✅ Service Layer abstraction
-- ✅ DTO-based API contracts
-- ✅ JWT Authentication + Role-based Authorization
-- ✅ EF Core Migrations
-- ✅ External service abstraction
-- ✅ Async/await throughout
-- ✅ Centralized configuration
+* Separation of Concerns
+* Layered Architecture inspired by Clean Architecture
+* Dependency Injection
+* Repository Pattern
+* Unit of Work Pattern
+* Service Layer abstraction
+* DTO-based API contracts
+* JWT Authentication
+* Role-based Authorization
+* EF Core Migrations
+* External service abstraction
+* Asynchronous database operations
+* Centralized configuration
 
 ---
 
-## 📜 License
+## 📜 Repository & Usage Policy
 
-This repository is a **private/proprietary project showcase**. The source code is **not open source**.
+This repository is **publicly visible for portfolio and project demonstration purposes**.
 
-**You may not:**
-- Clone or redistribute this project
-- Reuse the source code in another project
-- Publish modified versions
-- Use the source code commercially
-- Claim the source code as your own
+The source code remains **proprietary** and is not released under an open-source license.
 
-No open-source license is granted by this repository.
+The code may not be:
+
+* Cloned or redistributed
+* Reused in other projects
+* Published in modified or unmodified form
+* Used commercially
+* Presented as someone else's original work
+
+No permission to copy, modify, distribute, or reuse the source code is granted by this repository.
 
 ---
 
