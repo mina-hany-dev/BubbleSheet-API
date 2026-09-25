@@ -1,0 +1,6 @@
+@BubleSheet_HostAddress = http://localhost:5282
+
+GET {{BubleSheet_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
