@@ -228,9 +228,6 @@ Example configuration:
   }
 }
 ```
-
-> ⚠️ **Never commit real credentials, API keys, connection strings, or other secrets to source control.**
-
 ---
 
 ## 🚀 Getting Started
