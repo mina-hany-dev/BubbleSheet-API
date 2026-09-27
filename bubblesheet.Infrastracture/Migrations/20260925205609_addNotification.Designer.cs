@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bubblesheet.Infrastracture.Data;
 
@@ -11,9 +12,11 @@ using bubblesheet.Infrastracture.Data;
 namespace bubblesheet.Infrastracture.Migrations
 {
     [DbContext(typeof(bubblesheetDbContext))]
-    partial class bubblesheetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260925205609_addNotification")]
+    partial class addNotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

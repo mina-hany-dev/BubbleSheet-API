@@ -8,7 +8,7 @@ using MiniShop.Application.Interfaces;
 
 namespace BubleSheet.Services.Implementation
 {
-    public class QuestionBankService(IAccount account,IAccountService accountService,IStudentScore studentScore,IYear year,IStudentSubjectService StudentSubjectService,IStudentLessonService studentLessonService ,IJwtService jwtService, IQuestionExam questionExam, IUnitOfWork unitOfWork,IQuestion question,IStudentAnswer studentAnswer ,IStudentAttempts studentAttempts ,IQuestionService questionService , IQuestionBank questionBank , IStudentAttempts studentAttempt,IStudentAttemptService studentAttemptService) : IQuestionBankService
+    public class QuestionBankService(INotificationService notificationService,IAccount account,IAccountService accountService,IStudentScore studentScore,IYear year,IStudentSubjectService StudentSubjectService,IStudentLessonService studentLessonService ,IJwtService jwtService, IQuestionExam questionExam, IUnitOfWork unitOfWork,IQuestion question,IStudentAnswer studentAnswer ,IStudentAttempts studentAttempts ,IQuestionService questionService , IQuestionBank questionBank , IStudentAttempts studentAttempt,IStudentAttemptService studentAttemptService) : IQuestionBankService
     {
         private readonly IStudentScore _studentScore = studentScore;
         private readonly IJwtService _jwtService = jwtService;
@@ -24,6 +24,7 @@ namespace BubleSheet.Services.Implementation
         private readonly IYear _year = year;
         private readonly IAccount _account = account;
         private readonly IAccountService _accountService = accountService;
+        private readonly INotificationService _notificationService = notificationService;
         public async Task<QuestionBankQuestionWithAttemptID> GetQuestionBankWithQuestions(int questionBankId)
         {
             int studentId = _jwtService.GetCurrentStudentId();
@@ -100,6 +101,7 @@ namespace BubleSheet.Services.Implementation
             );
 
             var result = await _questionBank.AddQuestionBank(questionBank);
+            await _notificationService.CreateAsync(NotificationType.NewQuestionBank, result.BankId);
 
             return new QuestionBankDTO
             {

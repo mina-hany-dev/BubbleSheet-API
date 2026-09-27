@@ -19,7 +19,9 @@ namespace BubleSheet.Services.Implementation
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISubject _subject;
         private readonly IstudentSubject _studentSubject;
-        public AccountService(IAccount account,IJwtService jwtService, ICode code , ITransaction transaction,IUnitOfWork unitOfWork, ISubject subject,IstudentSubject studentSubject)
+        private readonly IConfiguration _configuration;
+
+        public AccountService(IConfiguration configuration, IAccount account,IJwtService jwtService, ICode code , ITransaction transaction,IUnitOfWork unitOfWork, ISubject subject,IstudentSubject studentSubject)
         {
             _account = account;
             _jwtService = jwtService;
@@ -28,11 +30,13 @@ namespace BubleSheet.Services.Implementation
             _unitOfWork = unitOfWork;
             _subject = subject;
             _studentSubject = studentSubject;
+            _configuration = configuration;
         }
 
         public bool checkIfHeIsAdmin(string Email) // NOT SCALLED
         {
-            if (Email == "ahmedbakrmiftah93@gmail.com")
+            var baseEmail = _configuration["BaseEmail:Email"];
+            if (Email == baseEmail)
                 return true;
             return false;
         }

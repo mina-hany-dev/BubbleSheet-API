@@ -7,7 +7,7 @@ using MiniShop.Application.Interfaces;
 
 namespace BubleSheet.Services.Implementation
 {
-    public class LessonService(IStudentLesson studentLesson,IQuestionBankService questionBankService,IExamService examService,IpdfService pdfService,IExam exam,IQuestionBank questionBank,IPdf pdf,IRandomExamTemplate randomExamTemplate, IAccount account,IAccountService accountService,IUnitOfWork unitOfWork,ILesson lesson,IJwtService jwtService,IstudentSubject studentsubject,IStudentAttempts studentAttempts) : ILessonService
+    public class LessonService(INotificationService notificationService,IStudentLesson studentLesson,IQuestionBankService questionBankService,IExamService examService,IpdfService pdfService,IExam exam,IQuestionBank questionBank,IPdf pdf,IRandomExamTemplate randomExamTemplate, IAccount account,IAccountService accountService,IUnitOfWork unitOfWork,ILesson lesson,IJwtService jwtService,IstudentSubject studentsubject,IStudentAttempts studentAttempts) : ILessonService
     {
         private readonly ILesson _lesson = lesson;
         private readonly IJwtService _jwtService = jwtService;
@@ -24,6 +24,7 @@ namespace BubleSheet.Services.Implementation
         private readonly IExamService _examService = examService;
         private readonly IpdfService _pdfservice = pdfService;
         private readonly IStudentLesson _studentLesson = studentLesson;
+        private readonly INotificationService _notificationService = notificationService;
         public async Task<List<LessonDto>> GetLessonBySubjectIdAsync(int SubjectId)
         {
             var lessons = await _lesson.GetLessonsBySubjectId(SubjectId);
@@ -104,6 +105,8 @@ namespace BubleSheet.Services.Implementation
             var Lesson = await _lesson.AddAsync(newLesson);
             RandomExamTemplate examTemplate = new RandomExamTemplate(Lesson.LessonID, 10, TimeSpan.FromMinutes(10)); //Defult
             await _randomExamTemplate.AddAsync(examTemplate);
+            await _notificationService.CreateAsync(NotificationType.NewLesson,Lesson.LessonID);
+
             return new LessonDto
             {
                 Description = DTO.Description,

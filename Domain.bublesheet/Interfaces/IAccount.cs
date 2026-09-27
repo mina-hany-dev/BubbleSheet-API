@@ -17,5 +17,6 @@ namespace Domain.bublesheet.Interfaces
         Task DeleteStudent (Student student);
         Task<int> CountOfStudent();
         Task<List<Student>> GetAllStudentsById(List<int> IDs);
+        Task<List<Student>> GetAllStudents();
     }
 }

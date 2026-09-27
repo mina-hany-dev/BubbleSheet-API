@@ -6,11 +6,12 @@ using Domain.bublesheet.Interfaces;
 
 namespace BubleSheet.Services.Implementation
 {
-    public class AdImgService(IImgAd imgAd, IBunnyStorageService bunnyStorageService,IUnitOfWork unitOfWork) : IImgadService
+    public class AdImgService(INotificationService notificationService, IImgAd imgAd, IBunnyStorageService bunnyStorageService,IUnitOfWork unitOfWork) : IImgadService
     {
         private readonly IImgAd _imgAd = imgAd;
         private readonly IBunnyStorageService _bunnyStorageService = bunnyStorageService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly INotificationService _notificationService = notificationService;
         public async Task<List<ImgAdDTO>> GetAllImgAds()
         {
             var ads = await _imgAd.GetAllAds();
@@ -68,7 +69,7 @@ namespace BubleSheet.Services.Implementation
                 {
                     await _bunnyStorageService.DeleteAsync(oldAd.ImgLink);
                 }
-
+                await _notificationService.CreateAsync(NotificationType.NewAd, img.Id);
                 return new ImgAdDTO
                 {
                     ID = img.Id,

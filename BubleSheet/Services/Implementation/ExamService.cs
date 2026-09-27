@@ -8,10 +8,10 @@ using MiniShop.Application.Interfaces;
 
 namespace BubleSheet.Services.Implementation
 {
-    public class ExamService (ISubject subject,ILesson lesson,IStudentSubjectService studentSubjectService,IYear year,IStudentScore studentScore,IAccount account1,IStudentLessonService studentLessonService,IExam exam ,IStudentAnswer studentAnswer, IRandomExamTemplate randomExamTemplate , IUnitOfWork unitOfWork, IAccount account,IStudentAttempts attempts, IStudentAttempts studentAttempts , IJwtService jwtService, IStudentAttemptService studentAttemptService , IQuestionExam questionExam , IQuestionService questionService) : IExamService
+    public class ExamService (INotificationService notificationService,ISubject subject,ILesson lesson,IStudentSubjectService studentSubjectService,IYear year,IStudentScore studentScore,IAccount account1,IStudentLessonService studentLessonService,IExam exam ,IStudentAnswer studentAnswer, IRandomExamTemplate randomExamTemplate , IUnitOfWork unitOfWork, IAccount account,IStudentAttempts attempts, IStudentAttempts studentAttempts , IJwtService jwtService, IStudentAttemptService studentAttemptService , IQuestionExam questionExam , IQuestionService questionService) : IExamService
     {
         private readonly IExam _exam = exam;
-        private readonly ISubject _subject = subject;
+        private readonly INotificationService _notificationService = notificationService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IJwtService _jwtService = jwtService;
         private readonly IQuestionExam _questionExam = questionExam;
@@ -43,12 +43,16 @@ namespace BubleSheet.Services.Implementation
 
             await _exam.AddAsyncExam(exam);
 
-            if (saveChanges)
+            if (saveChanges) // if == true --> it is RandomExam
             {
                 await _unitOfWork.SaveChangesAsync();
             }
+            else
+            {
+                await _notificationService.CreateAsync(NotificationType.NewExam, exam.ExamID);
+            }
 
-            return exam.ExamID;
+                return exam.ExamID;
         }
         public async Task<ExamDto> EditExam(EditExamDto Dto)
         {

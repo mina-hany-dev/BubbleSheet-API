@@ -58,5 +58,9 @@ namespace bubblesheet.Infrastracture.Repos
         {
             return await _context.Students.CountAsync();
         }
+        public async Task<List<Student>> GetAllStudents()
+        {
+            return await _context.Students.ToListAsync();
+        }
     }
 }

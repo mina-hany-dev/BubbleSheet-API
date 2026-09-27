@@ -35,9 +35,14 @@ namespace BubleSheet
 
             // Dependency Injection
 
+            builder.Services.AddHostedService<NotificationWorker>();
+            builder.Services.AddSingleton<INotificationQueue, NotificationQueue>();
+
             builder.Services.AddScoped<IAccount, AccountRepo>();
             builder.Services.AddScoped<IJwtService, JwtServiceImplementation>();
 
+            builder.Services.AddScoped<IStudentNotification, StudentNotificationRepo>();
+            builder.Services.AddScoped<INotification,NotificationRepo>();
             builder.Services.AddScoped<IExam, ExamRepo>();
             builder.Services.AddScoped<IAdvertiser, AdvertiserRepo>();
             builder.Services.AddScoped<ICode, CodeRepo>();
@@ -79,6 +84,7 @@ namespace BubleSheet
             builder.Services.AddScoped<IYearService, YearService>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
             builder.Services.AddScoped<IResetPasswordService, ResetPasswordService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
 
             // JWT
 

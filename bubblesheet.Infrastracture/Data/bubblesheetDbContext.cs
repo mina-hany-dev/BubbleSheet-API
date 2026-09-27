@@ -32,6 +32,8 @@ namespace bubblesheet.Infrastracture.Data
         public DbSet<ImgAd> ImgAds { get; set; }
         public DbSet<ResetPassword> resetPasswords { get; set; }
         public DbSet<StudentScore> StudentScores { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<StudentNotification> StudentNotifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -150,6 +152,20 @@ namespace bubblesheet.Infrastracture.Data
                     .OnDelete(DeleteBehavior.NoAction);
             });
 
+
+            // Notififcation 
+
+            modelBuilder.Entity<StudentNotification>()
+    .HasKey(x => new { x.StudentId, x.NotificationId });
+            modelBuilder.Entity<StudentNotification>()
+    .HasOne(x => x.Student)
+    .WithMany()
+    .HasForeignKey(x => x.StudentId);
+
+            modelBuilder.Entity<StudentNotification>()
+                .HasOne(x => x.Notification)
+                .WithMany(x => x.StudentNotifications)
+                .HasForeignKey(x => x.NotificationId);
 
             // =========================================================
             // EXAM QUESTION
