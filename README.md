@@ -28,69 +28,86 @@ The platform provides tools for:
 * Managing educational lessons and PDF resources
 * Managing student wallets and recharge codes
 * Supporting administrative dashboards and platform operations
+* Delivering in-app notifications to students
 
-This repository contains the **backend API** responsible for the platform's core business logic, authentication, data access, assessment workflows, and external service integrations.
+This repository contains the **backend API** responsible for the platform's core business logic, authentication, data access, assessment workflows, background processing, and external service integrations.
 
 ---
 
 ## ✨ Features
 
-| Category              | Features                                                        |
-| --------------------- | --------------------------------------------------------------- |
-| 🔐 **Authentication** | JWT authentication, role-based authorization, password reset    |
-| 👥 **Users**          | Student and admin management                                    |
-| 📝 **Exams**          | Exam creation and management, random exam generation            |
-| 📚 **Question Banks** | Question bank management, questions and multiple-choice answers |
-| 📊 **Assessment**     | Student attempts, automatic scoring, performance tracking       |
-| ⭐ **Reviews**         | Exam and question-bank reviews                                  |
-| 📖 **Content**        | Lesson management, PDF management                               |
-| 💳 **Payments**       | Wallet system, recharge codes, transaction tracking             |
-| 📢 **Platform**       | Advertisements, academic years, dashboard and statistics        |
-| 📧 **Email**          | Transactional email delivery through Brevo                      |
-| ☁️ **Storage**        | External file storage through Bunny Storage                     |
-| 📘 **Documentation**  | Swagger / OpenAPI                                               |
+| Category              | Features                                                                            |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| 🔐 **Authentication** | JWT authentication, role-based authorization, password reset                        |
+| 👥 **Users**          | Student and admin management                                                        |
+| 📝 **Exams**          | Exam creation and management, random exam generation                                |
+| 📚 **Question Banks** | Question bank management, questions and multiple-choice answers                     |
+| 📊 **Assessment**     | Student attempts, automatic scoring, performance tracking                           |
+| 🔔 **Notifications**  | In-app notifications, per-student read status, background notification distribution |
+| ⭐ **Reviews**         | Exam and question-bank reviews                                                      |
+| 📖 **Content**        | Lesson management, PDF management                                                   |
+| 💳 **Payments**       | Wallet system, recharge codes, transaction tracking                                 |
+| 📢 **Platform**       | Advertisements, academic years, dashboard and statistics                            |
+| 📧 **Email**          | Transactional email delivery through Brevo                                          |
+| ☁️ **Storage**        | External file storage through Bunny Storage                                         |
+| 📘 **Documentation**  | Swagger / OpenAPI                                                                   |
 
 ---
 
 ## 🏗️ Architecture
 
-The project follows a **layered architecture inspired by Clean Architecture principles**, with responsibilities separated across API, application services, infrastructure, and domain layers.
+BubbleSheet follows a **layered architecture inspired by Clean Architecture principles**, with responsibilities separated across three main projects:
 
 ```text
-┌──────────────────────────────┐
-│          API Layer           │
-│   Controllers / HTTP / Auth  │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│        Service Layer         │
-│       Business Logic         │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│     Infrastructure Layer     │
-│  EF Core / Repositories /    │
-│      External Services       │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│         Domain Layer         │
-│ Entities / Interfaces /      │
-│ Enums / Domain Contracts     │
-└──────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│                 Presentation                 │
+│                                              │
+│ Controllers / HTTP / Authentication         │
+│ Services / Service Interfaces                │
+│ Background Workers / Notification Queue      │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│               Infrastructure                 │
+│                                              │
+│ EF Core / SQL Server                         │
+│ DbContext / Repositories / Unit of Work      │
+│ External Services                            │
+└──────────────────────┬───────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│                   Domain                     │
+│                                              │
+│ Entities / Enums / Domain Interfaces         │
+│ Core Business Contracts                      │
+└──────────────────────────────────────────────┘
 ```
 
 ### Layers
 
-| Layer              | Responsibility                                                                            |
-| ------------------ | ----------------------------------------------------------------------------------------- |
-| **API**            | HTTP endpoints, controllers, request handling, authentication, authorization, and Swagger |
-| **Services**       | Application business logic and orchestration                                              |
-| **Infrastructure** | EF Core, SQL Server, repositories, Unit of Work, migrations, and external services        |
-| **Domain**         | Core entities, interfaces, enums, and domain contracts                                    |
+| Layer              | Responsibility                                                                                                                   |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Presentation**   | HTTP endpoints, controllers, request handling, authentication, authorization, services, background processing, and API contracts |
+| **Infrastructure** | EF Core, SQL Server, DbContext, repositories, Unit of Work, migrations, and external service integrations                        |
+| **Domain**         | Core entities, enums, repository contracts, and domain-level abstractions                                                        |
+
+### Dependency Direction
+
+```text
+Presentation
+     │
+     ├──────────────► Infrastructure
+     │
+     └──────────────► Domain
+
+Infrastructure
+     │
+     └──────────────► Domain
+```
+
+The **Domain** layer remains independent from both Presentation and Infrastructure.
 
 ---
 
@@ -117,6 +134,12 @@ The project follows a **layered architecture inspired by Clean Architecture prin
 * Role-based authorization
 * `Admin` and `Student` roles
 
+### Background Processing
+
+* ASP.NET Core `BackgroundService`
+* `System.Threading.Channels`
+* Asynchronous background notification processing
+
 ### External Services
 
 * **Bunny Storage** — file and media storage
@@ -133,26 +156,36 @@ The project follows a **layered architecture inspired by Clean Architecture prin
 ```text
 BubbleSheet/
 │
-├── BubleSheet/                     # API Layer
-│   ├── Controllers/                # HTTP endpoints
+├── BubleSheet/                         # Presentation / API Layer
+│   ├── Controllers/                   # HTTP endpoints
+│   │
 │   ├── Services/
-│   │   ├── Implementation/         # Service implementations
-│   │   ├── Interfaces/             # Service contracts
-│   │   └── Models/                 # Service-related models
+│   │   ├── Implementation/            # Service implementations
+│   │   ├── Interfaces/                # Service contracts
+│   │   └── Models/                    # Service-related models
+│   │
+│   ├── Worker/                        # Background workers
+│   │   └── NotificationWorker.cs
+│   │
 │   ├── Program.cs
 │   ├── appsettings.json
 │   └── Properties/
 │
-├── Domain.bublesheet/              # Domain Layer
-│   ├── Entities/                   # Core domain entities
-│   ├── Enums/                      # Domain enums
-│   └── Interfaces/                 # Domain contracts
+├── Domain.bublesheet/                 # Domain Layer
+│   ├── Entities/                      # Core domain entities
+│   │   ├── Notification.cs
+│   │   └── StudentNotification.cs
+│   │
+│   ├── Enums/                         # Domain enums
+│   │   └── NotificationType.cs
+│   │
+│   └── Interfaces/                    # Repository/domain contracts
 │
-├── bubblesheet.Infrastracture/     # Infrastructure Layer
-│   ├── Data/                       # EF Core DbContext
-│   ├── Dtos/                       # Data Transfer Objects
-│   ├── Migrations/                 # EF Core migrations
-│   └── Repos/                      # Repository implementations
+├── bubblesheet.Infrastracture/        # Infrastructure Layer
+│   ├── Data/                          # EF Core DbContext
+│   ├── Dtos/                          # Data Transfer Objects
+│   ├── Migrations/                    # EF Core migrations
+│   └── Repos/                         # Repository implementations
 │
 └── BubleSheet.sln
 ```
@@ -198,6 +231,169 @@ Authorization is applied according to the authenticated user's role, including:
 
 ---
 
+## 🔔 Notification System
+
+BubbleSheet provides an **in-app notification system** for delivering platform events to students.
+
+Notifications are stored separately from their recipients.
+
+```text
+Notification
+     │
+     │ 1
+     ▼
+StudentNotification
+     │
+     │ N
+     ▼
+Student
+```
+
+### Notification
+
+The `Notification` entity represents the notification itself.
+
+It contains:
+
+* Notification type
+* Optional reference ID for the related resource
+* Creation timestamp
+
+Supported notification types include:
+
+```text
+NewExam
+NewQuestionBank
+NewLesson
+NewAd
+```
+
+The optional `referenceId` can point to the related resource, such as:
+
+```text
+ExamId
+QuestionBankId
+LessonId
+AdId
+```
+
+### StudentNotification
+
+`StudentNotification` represents the relationship between a notification and a student.
+
+It allows the system to track:
+
+* Which student received the notification
+* Whether the student has read the notification
+* The relationship between the student and notification
+
+This design allows a single notification to be distributed to multiple students while maintaining an independent read status for each student.
+
+---
+
+## ⚙️ Background Notification Processing
+
+When a notification needs to be delivered to **all students**, the API does not create every `StudentNotification` record during the original HTTP request.
+
+Instead, notification distribution is handled asynchronously by a background worker.
+
+```text
+Client
+   │
+   │ Create Notification
+   ▼
+NotificationService
+   │
+   ├── Create Notification
+   ├── Save Notification
+   │
+   └── Enqueue NotificationId
+              │
+              ▼
+       Notification Queue
+              │
+              ▼
+     NotificationWorker
+              │
+              ├── Dequeue NotificationId
+              │
+              ├── Get Students
+              │
+              ├── Create StudentNotification records
+              │
+              └── Save Changes
+```
+
+### Notification Queue
+
+The notification queue uses `System.Threading.Channels`.
+
+The queue stores only the `NotificationId` because the current notification model distributes notifications to **all students**.
+
+```text
+NotificationService
+        │
+        │ EnqueueAsync(notificationId)
+        ▼
+      Channel
+        │
+        │ DequeueAsync()
+        ▼
+NotificationWorker
+```
+
+The queue provides an asynchronous boundary between the HTTP request and the potentially expensive notification distribution process.
+
+### Notification Worker
+
+The `NotificationWorker` is implemented using ASP.NET Core's `BackgroundService`.
+
+Its responsibility is to:
+
+1. Wait for notification IDs in the queue.
+2. Retrieve the students who should receive the notification.
+3. Create `StudentNotification` records.
+4. Add the records in bulk.
+5. Commit the changes through the Unit of Work.
+
+The worker runs independently from incoming HTTP requests.
+
+### Notification Processing Flow
+
+```text
+Create Notification
+        │
+        ▼
+   Save Notification
+        │
+        ▼
+ Enqueue NotificationId
+        │
+        ▼
+ Notification Queue
+        │
+        ▼
+ NotificationWorker
+        │
+        ▼
+    Get Students
+        │
+        ▼
+Create StudentNotification
+        │
+        ▼
+      AddRange
+        │
+        ▼
+ UnitOfWork.SaveChanges()
+```
+
+This prevents the original API request from waiting for the complete distribution process.
+
+> For very large student populations, notification distribution can be processed in batches to reduce memory usage and database pressure.
+
+---
+
 ## ⚙️ Configuration
 
 The application requires environment-specific configuration for database access, authentication, storage, and email services.
@@ -228,6 +424,9 @@ Example configuration:
   }
 }
 ```
+
+**Do not commit real secrets or credentials to the repository.**
+
 ---
 
 ## 🚀 Getting Started
@@ -351,6 +550,13 @@ Provides wallet operations, recharge codes, and transaction tracking for student
 </details>
 
 <details>
+<summary><strong>Notifications</strong></summary>
+
+Provides in-app notifications for students, per-student read tracking, notification types, and asynchronous background distribution through a notification queue and worker.
+
+</details>
+
+<details>
 <summary><strong>Dashboard & Statistics</strong></summary>
 
 Provides administrative statistics and platform-level information.
@@ -373,7 +579,10 @@ Provides administrative statistics and platform-level information.
 * EF Core Migrations
 * External service abstraction
 * Asynchronous database operations
+* Background processing with `BackgroundService`
+* In-process asynchronous queue using `System.Threading.Channels`
 * Centralized configuration
+* Bulk database operations where appropriate
 
 ---
 
