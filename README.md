@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📋 BubbleSheet API
+# BubbleSheet API
 
 **Backend API powering the BubbleSheet educational assessment platform**
 
@@ -16,7 +16,7 @@
 
 ---
 
-## 📌 Overview
+## Overview
 
 **BubbleSheet** is an EdTech platform designed to digitize traditional assessment workflows and provide a centralized environment for managing educational assessments.
 
@@ -30,37 +30,38 @@ The platform provides tools for:
 * Supporting administrative dashboards and platform operations
 * Delivering in-app notifications to students
 
-This repository contains the **backend API** responsible for the platform's core business logic, authentication, data access, assessment workflows, background processing, and external service integrations.
+This repository contains the **backend API** responsible for the platform's core business logic, authentication, data access, assessment workflows, background processing, notification distribution, and external service integrations.
 
 ---
 
-## ✨ Features
+## Features
 
-| Category              | Features                                                                            |
-| --------------------- | ----------------------------------------------------------------------------------- |
-| 🔐 **Authentication** | JWT authentication, role-based authorization, password reset                        |
-| 👥 **Users**          | Student and admin management                                                        |
-| 📝 **Exams**          | Exam creation and management, random exam generation                                |
-| 📚 **Question Banks** | Question bank management, questions and multiple-choice answers                     |
-| 📊 **Assessment**     | Student attempts, automatic scoring, performance tracking                           |
-| 🔔 **Notifications**  | In-app notifications, per-student read status, background notification distribution |
-| ⭐ **Reviews**         | Exam and question-bank reviews                                                      |
-| 📖 **Content**        | Lesson management, PDF management                                                   |
-| 💳 **Payments**       | Wallet system, recharge codes, transaction tracking                                 |
-| 📢 **Platform**       | Advertisements, academic years, dashboard and statistics                            |
-| 📧 **Email**          | Transactional email delivery through Brevo                                          |
-| ☁️ **Storage**        | External file storage through Bunny Storage                                         |
-| 📘 **Documentation**  | Swagger / OpenAPI                                                                   |
+| Category                 | Features                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| **Authentication**       | JWT authentication, role-based authorization, password reset                        |
+| **Users**                | Student and admin management                                                        |
+| **Exams**                | Exam creation and management, random exam generation                                |
+| **Question Banks**       | Question bank management, questions and multiple-choice answers                     |
+| **Assessment**           | Student attempts, automatic scoring, performance tracking                           |
+| **Notifications**        | In-app notifications, per-student read status, asynchronous background distribution |
+| **Notification Cleanup** | Automatic cleanup of notifications older than 30 days                               |
+| **Reviews**              | Exam and question-bank reviews                                                      |
+| **Content**              | Lesson management, PDF management                                                   |
+| **Payments**             | Wallet system, recharge codes, transaction tracking                                 |
+| **Platform**             | Advertisements, academic years, dashboard and statistics                            |
+| **Email**                | Transactional email delivery through Brevo                                          |
+| **Storage**              | External file storage through Bunny Storage                                         |
+| **Documentation**        | Swagger / OpenAPI                                                                   |
 
 ---
 
-## 🏗️ Architecture
+# Architecture
 
 BubbleSheet follows a **layered architecture inspired by Clean Architecture principles**, with responsibilities separated across three main projects:
 
 ```text
 ┌──────────────────────────────────────────────┐
-│                 Presentation                 │
+│                  Presentation                │
 │                                              │
 │ Controllers / HTTP / Authentication         │
 │ Services / Service Interfaces                │
@@ -69,7 +70,7 @@ BubbleSheet follows a **layered architecture inspired by Clean Architecture prin
                        │
                        ▼
 ┌──────────────────────────────────────────────┐
-│               Infrastructure                 │
+│                Infrastructure                │
 │                                              │
 │ EF Core / SQL Server                         │
 │ DbContext / Repositories / Unit of Work      │
@@ -78,14 +79,14 @@ BubbleSheet follows a **layered architecture inspired by Clean Architecture prin
                        │
                        ▼
 ┌──────────────────────────────────────────────┐
-│                   Domain                     │
+│                    Domain                    │
 │                                              │
 │ Entities / Enums / Domain Interfaces         │
 │ Core Business Contracts                      │
 └──────────────────────────────────────────────┘
 ```
 
-### Layers
+## Layers
 
 | Layer              | Responsibility                                                                                                                   |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -93,7 +94,7 @@ BubbleSheet follows a **layered architecture inspired by Clean Architecture prin
 | **Infrastructure** | EF Core, SQL Server, DbContext, repositories, Unit of Work, migrations, and external service integrations                        |
 | **Domain**         | Core entities, enums, repository contracts, and domain-level abstractions                                                        |
 
-### Dependency Direction
+## Dependency Direction
 
 ```text
 Presentation
@@ -111,15 +112,15 @@ The **Domain** layer remains independent from both Presentation and Infrastructu
 
 ---
 
-## 🛠️ Technology Stack
+# Technology Stack
 
-### Core
+## Core
 
 * **C#**
 * **.NET 8**
 * **ASP.NET Core Web API**
 
-### Data Access
+## Data Access
 
 * **Entity Framework Core**
 * **SQL Server**
@@ -127,31 +128,33 @@ The **Domain** layer remains independent from both Presentation and Infrastructu
 * Unit of Work Pattern
 * EF Core Migrations
 
-### Security
+## Security
 
 * JWT Bearer Authentication
 * BCrypt password hashing
 * Role-based authorization
 * `Admin` and `Student` roles
 
-### Background Processing
+## Background Processing
 
 * ASP.NET Core `BackgroundService`
 * `System.Threading.Channels`
+* `PeriodicTimer`
 * Asynchronous background notification processing
+* Scheduled data cleanup
 
-### External Services
+## External Services
 
 * **Bunny Storage** — file and media storage
 * **Brevo** — transactional email delivery
 
-### API Documentation
+## API Documentation
 
 * **Swagger / OpenAPI**
 
 ---
 
-## 📁 Project Structure
+# Project Structure
 
 ```text
 BubbleSheet/
@@ -165,7 +168,8 @@ BubbleSheet/
 │   │   └── Models/                    # Service-related models
 │   │
 │   ├── Worker/                        # Background workers
-│   │   └── NotificationWorker.cs
+│   │   ├── NotificationWorker.cs      # Notification distribution
+│   │   └── CleanupWorker.cs           # Scheduled data cleanup
 │   │
 │   ├── Program.cs
 │   ├── appsettings.json
@@ -192,7 +196,7 @@ BubbleSheet/
 
 ---
 
-## 🔐 Authentication & Authorization
+# Authentication & Authorization
 
 The API uses **JWT Bearer Authentication** to secure protected endpoints.
 
@@ -231,11 +235,11 @@ Authorization is applied according to the authenticated user's role, including:
 
 ---
 
-## 🔔 Notification System
+# Notification System
 
 BubbleSheet provides an **in-app notification system** for delivering platform events to students.
 
-Notifications are stored separately from their recipients.
+Notifications are separated from their student-specific state.
 
 ```text
 Notification
@@ -249,7 +253,7 @@ StudentNotification
 Student
 ```
 
-### Notification
+## Notification
 
 The `Notification` entity represents the notification itself.
 
@@ -268,7 +272,7 @@ NewLesson
 NewAd
 ```
 
-The optional `referenceId` can point to the related resource, such as:
+The optional `ReferenceId` can point to the related resource, such as:
 
 ```text
 ExamId
@@ -277,7 +281,7 @@ LessonId
 AdId
 ```
 
-### StudentNotification
+## StudentNotification
 
 `StudentNotification` represents the relationship between a notification and a student.
 
@@ -289,9 +293,21 @@ It allows the system to track:
 
 This design allows a single notification to be distributed to multiple students while maintaining an independent read status for each student.
 
+For example:
+
+```text
+Notification #15
+       │
+       ├── Student A → IsRead = true
+       ├── Student B → IsRead = false
+       └── Student C → IsRead = true
+```
+
+The read state belongs to `StudentNotification`, not to `Notification`, because each student can have a different read state for the same notification.
+
 ---
 
-## ⚙️ Background Notification Processing
+# Background Notification Processing
 
 When a notification needs to be delivered to **all students**, the API does not create every `StudentNotification` record during the original HTTP request.
 
@@ -313,7 +329,7 @@ NotificationService
        Notification Queue
               │
               ▼
-     NotificationWorker
+      NotificationWorker
               │
               ├── Dequeue NotificationId
               │
@@ -324,7 +340,11 @@ NotificationService
               └── Save Changes
 ```
 
-### Notification Queue
+This keeps the original HTTP request independent from the potentially expensive distribution process.
+
+---
+
+## Notification Queue
 
 The notification queue uses `System.Threading.Channels`.
 
@@ -342,13 +362,36 @@ NotificationService
 NotificationWorker
 ```
 
-The queue provides an asynchronous boundary between the HTTP request and the potentially expensive notification distribution process.
+The queue provides an asynchronous boundary between the HTTP request and notification distribution.
 
-### Notification Worker
+The worker does **not continuously poll the queue**.
+
+When the queue is empty, the worker asynchronously waits for an item:
+
+```text
+NotificationWorker
+       │
+       ▼
+  DequeueAsync()
+       │
+       │ Waiting
+       │
+       ▼
+Notification Enqueued
+       │
+       ▼
+Worker Resumes
+```
+
+This allows the worker to remain idle while there is no notification work to process.
+
+---
+
+## Notification Worker
 
 The `NotificationWorker` is implemented using ASP.NET Core's `BackgroundService`.
 
-Its responsibility is to:
+Its responsibilities are:
 
 1. Wait for notification IDs in the queue.
 2. Retrieve the students who should receive the notification.
@@ -358,7 +401,7 @@ Its responsibility is to:
 
 The worker runs independently from incoming HTTP requests.
 
-### Notification Processing Flow
+### Processing Flow
 
 ```text
 Create Notification
@@ -385,16 +428,94 @@ Create StudentNotification
       AddRange
         │
         ▼
- UnitOfWork.SaveChanges()
+UnitOfWork.SaveChanges()
 ```
 
-This prevents the original API request from waiting for the complete distribution process.
+If multiple notifications are queued, the worker processes them as queue items become available.
 
-> For very large student populations, notification distribution can be processed in batches to reduce memory usage and database pressure.
+For very large student populations, notification distribution can be processed in batches to reduce memory usage and database pressure.
 
 ---
 
-## ⚙️ Configuration
+# Notification Cleanup
+
+BubbleSheet also uses a separate background worker for **scheduled notification cleanup**.
+
+The cleanup process is intentionally separated from `NotificationWorker` to maintain a clear separation of responsibilities.
+
+```text
+NotificationWorker
+    │
+    └── Notification Distribution
+
+
+CleanupWorker
+    │
+    └── Scheduled Data Cleanup
+```
+
+## Cleanup Worker
+
+The `CleanupWorker` runs independently using a `PeriodicTimer`.
+
+Its responsibility is to periodically remove old notifications.
+
+The cleanup process targets notifications that are older than **30 days**.
+
+```text
+CleanupWorker
+      │
+      ▼
+PeriodicTimer
+      │
+      │ Scheduled interval
+      ▼
+Find Notifications
+older than 30 days
+      │
+      ▼
+Delete Notifications
+      │
+      ▼
+Cascade Delete
+      │
+      ▼
+StudentNotifications
+```
+
+## Cascade Delete
+
+`StudentNotification` is dependent on `Notification`.
+
+The relationship is configured with:
+
+```csharp
+.OnDelete(DeleteBehavior.Cascade)
+```
+
+Therefore, when an old `Notification` is deleted, its related `StudentNotification` records are automatically deleted by the database.
+
+```text
+Notification
+     │
+     ├── StudentNotification
+     ├── StudentNotification
+     └── StudentNotification
+
+Delete Notification
+        │
+        ▼
+Cascade Delete
+        │
+        ▼
+Delete related StudentNotifications
+```
+
+This keeps notification cleanup centralized around the parent `Notification` entity instead of manually deleting child records first.
+
+---
+
+# Configuration
 
 The application requires environment-specific configuration for database access, authentication, storage, and email services.
 
@@ -429,9 +550,9 @@ Example configuration:
 
 ---
 
-## 🚀 Getting Started
+# Getting Started
 
-### Prerequisites
+## Prerequisites
 
 * [.NET 8 SDK](https://dotnet.microsoft.com/download)
 * SQL Server
@@ -439,19 +560,19 @@ Example configuration:
 * Required Bunny Storage credentials
 * Required Brevo credentials
 
-### Restore Dependencies
+## Restore Dependencies
 
 ```bash
 dotnet restore
 ```
 
-### Build
+## Build
 
 ```bash
 dotnet build
 ```
 
-### Apply Database Migrations
+## Apply Database Migrations
 
 ```bash
 dotnet ef database update \
@@ -459,7 +580,7 @@ dotnet ef database update \
   --startup-project BubleSheet
 ```
 
-### Run the API
+## Run the API
 
 ```bash
 dotnet run --project BubleSheet
@@ -469,11 +590,11 @@ Once the application is running, open the configured Swagger endpoint to explore
 
 ---
 
-## 🗄️ Database Migrations
+# Database Migrations
 
 The project uses **Entity Framework Core Migrations** to manage database schema changes.
 
-### Create a Migration
+## Create a Migration
 
 ```bash
 dotnet ef migrations add <MigrationName> \
@@ -481,7 +602,7 @@ dotnet ef migrations add <MigrationName> \
   --startup-project BubleSheet
 ```
 
-### Apply Migrations
+## Apply Migrations
 
 ```bash
 dotnet ef database update \
@@ -491,7 +612,7 @@ dotnet ef database update \
 
 ---
 
-## 🧩 Core Modules
+# Core Modules
 
 <details>
 <summary><strong>Authentication & Accounts</strong></summary>
@@ -552,7 +673,7 @@ Provides wallet operations, recharge codes, and transaction tracking for student
 <details>
 <summary><strong>Notifications</strong></summary>
 
-Provides in-app notifications for students, per-student read tracking, notification types, and asynchronous background distribution through a notification queue and worker.
+Provides in-app notifications for students, per-student read tracking, notification types, asynchronous background distribution through a notification queue, and scheduled cleanup of notifications older than 30 days.
 
 </details>
 
@@ -565,7 +686,9 @@ Provides administrative statistics and platform-level information.
 
 ---
 
-## 📐 Engineering Practices
+# Engineering Practices
+
+The project applies the following engineering practices:
 
 * Separation of Concerns
 * Layered Architecture inspired by Clean Architecture
@@ -581,12 +704,15 @@ Provides administrative statistics and platform-level information.
 * Asynchronous database operations
 * Background processing with `BackgroundService`
 * In-process asynchronous queue using `System.Threading.Channels`
+* Scheduled background processing with `PeriodicTimer`
+* Separation of background worker responsibilities
+* Cascade delete for dependent notification records
 * Centralized configuration
 * Bulk database operations where appropriate
 
 ---
 
-## 📜 Repository & Usage Policy
+# Repository & Usage Policy
 
 This repository is **publicly visible for portfolio and project demonstration purposes**.
 
@@ -604,7 +730,7 @@ No permission to copy, modify, distribute, or reuse the source code is granted b
 
 ---
 
-## 👨‍💻 Author
+# Author
 
 <div align="center">
 
