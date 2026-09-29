@@ -153,19 +153,21 @@ namespace bubblesheet.Infrastracture.Data
             });
 
 
-            // Notififcation 
+            // Notification
 
             modelBuilder.Entity<StudentNotification>()
-    .HasKey(x => new { x.StudentId, x.NotificationId });
+                .HasKey(x => new { x.StudentId, x.NotificationId });
+
             modelBuilder.Entity<StudentNotification>()
-    .HasOne(x => x.Student)
-    .WithMany()
-    .HasForeignKey(x => x.StudentId);
+                .HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId);
 
             modelBuilder.Entity<StudentNotification>()
                 .HasOne(x => x.Notification)
                 .WithMany(x => x.StudentNotifications)
-                .HasForeignKey(x => x.NotificationId);
+                .HasForeignKey(x => x.NotificationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // =========================================================
             // EXAM QUESTION

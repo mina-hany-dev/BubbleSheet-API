@@ -13,8 +13,7 @@ namespace Domain.bublesheet.Interfaces
 
         Task<Notification?> GetByIdAsync(int id);
 
-        Task<List<Notification>> GetByStudentIdAsync(int studentId);
-
         Task<List<Notification>> GetUnreadByStudentIdAsync(int studentId);
+        Task DeleteOldRowsAsync();
     }
 }

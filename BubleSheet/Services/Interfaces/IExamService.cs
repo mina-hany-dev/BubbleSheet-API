@@ -4,7 +4,7 @@ namespace BubleSheet.Services.Interfaces
 {
     public interface IExamService
     {
-        Task<int> AddExamAsync(AddExamDto addExamDto, bool saveChanges = true);
+        Task<int> AddExamAsync(AddExamDto addExamDto);
         Task<ExamDto> EditExam(EditExamDto Dto);
         Task DeleteExam(int id);
         Task DeleteExams(List<int> IDs);

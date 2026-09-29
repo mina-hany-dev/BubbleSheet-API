@@ -42,6 +42,14 @@ namespace bubblesheet.Infrastracture.Repos
                     x.StudentId == studentId &&
                     x.NotificationId == notificationId);
         }
+        public async Task<List<StudentNotification>> GetByStudentIdAsync(int studentId)
+        {
+            return await _context.StudentNotifications
+                .Where(x => x.StudentId == studentId)
+                .Include(x => x.Notification)
+                .OrderByDescending(x => x.Notification.CreatedAt)
+                .ToListAsync();
+        }
 
         public async Task MarkAsReadAsync(
             int studentId,

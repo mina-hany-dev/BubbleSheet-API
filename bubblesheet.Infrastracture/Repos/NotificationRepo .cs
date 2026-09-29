@@ -32,16 +32,6 @@ namespace bubblesheet.Infrastracture.Repos
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Notification>> GetByStudentIdAsync(int studentId)
-        {
-            return await _context.StudentNotifications
-                .Where(x => x.StudentId == studentId)
-                .Include(x => x.Notification)
-                .Select(x => x.Notification)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
-        }
-
         public async Task<List<Notification>> GetUnreadByStudentIdAsync(int studentId)
         {
             return await _context.StudentNotifications
@@ -52,6 +42,16 @@ namespace bubblesheet.Infrastracture.Repos
                 .Select(x => x.Notification)
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
+        }
+        public async Task DeleteOldRowsAsync()
+        {
+            var cutoffDate = DateTime.UtcNow.AddDays(-30);
+
+            var oldNotifications = await _context.Notifications
+                .Where(x => x.CreatedAt < cutoffDate)
+                .ToListAsync();
+
+            _context.Notifications.RemoveRange(oldNotifications);
         }
     }
 }

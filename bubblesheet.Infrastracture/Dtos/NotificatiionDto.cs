@@ -11,9 +11,8 @@ namespace bubblesheet.Infrastracture.Dtos
     {
         public int Id { get; set; }
         public NotificationType Type { get; set; }
-
-        // ExamId, QuestionBankId, LessonId, AdId
         public int? ReferenceId { get; set; }
+        public bool IsMark { get; set; }
     }
     public class MarkNotificationsAsReadDto
     {

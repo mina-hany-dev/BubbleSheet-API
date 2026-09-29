@@ -27,8 +27,7 @@ namespace BubleSheet.Services.Implementation
         private readonly IStudentSubjectService _StudentSubjectService = studentSubjectService;
         private readonly IYear _year = year;
         public async Task<int> AddExamAsync(
-    AddExamDto addExamDto,
-    bool saveChanges = true)
+    AddExamDto addExamDto)
         {
             if (addExamDto == null)
                 throw new ArgumentNullException(nameof(addExamDto));
@@ -42,16 +41,12 @@ namespace BubleSheet.Services.Implementation
             );
 
             await _exam.AddAsyncExam(exam);
-
-            if (saveChanges) // if == true --> it is RandomExam
-            {
-                await _unitOfWork.SaveChangesAsync();
-            }
-            else
+            await _unitOfWork.SaveChangesAsync();
+            if (addExamDto.StudentId == null)
             {
                 await _notificationService.CreateAsync(NotificationType.NewExam, exam.ExamID);
             }
-
+                
                 return exam.ExamID;
         }
         public async Task<ExamDto> EditExam(EditExamDto Dto)
@@ -87,7 +82,7 @@ namespace BubleSheet.Services.Implementation
                 Duration = RandomExamTemplate.Duration,
                 StudentId = StudentId,
             };
-            int Examid = await AddExamAsync(addExamDto,true);
+            int Examid = await AddExamAsync(addExamDto);
             await _questionService.GenerateQuestionsAsync(LessonId, RandomExamTemplate.QuestionCount,Examid);
             await _unitOfWork.SaveChangesAsync();
             return Examid;

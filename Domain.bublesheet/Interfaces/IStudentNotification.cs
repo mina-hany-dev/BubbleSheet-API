@@ -23,5 +23,6 @@ namespace Domain.bublesheet.Interfaces
             int notificationId);
 
         Task<int> GetUnreadCountAsync(int studentId);
+        Task<List<StudentNotification>> GetByStudentIdAsync(int studentId);
     }
 }
